@@ -1,0 +1,17 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  DealID: 1
+  EntryID: 1
+  Bet: 9.99
+  PlayerHandValue: 1
+  Outcome: MyString
+  Payout: MyString
+
+two:
+  DealID: 1
+  EntryID: 1
+  Bet: 9.99
+  PlayerHandValue: 1
+  Outcome: MyString
+  Payout: MyString

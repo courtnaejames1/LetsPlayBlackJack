@@ -1,0 +1,13 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  GameID: 1
+  RoundNumber: 1
+  DealerHandValue: 1
+  DealAt: 2026-08-30 01:28:23
+
+two:
+  GameID: 1
+  RoundNumber: 1
+  DealerHandValue: 1
+  DealAt: 2026-08-30 01:28:23

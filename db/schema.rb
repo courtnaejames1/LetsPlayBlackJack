@@ -10,10 +10,25 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_08_30_054410) do
+ActiveRecord::Schema[8.1].define(version: 2026_08_30_062823) do
   create_table "dealers", force: :cascade do |t|
     t.string "DealerName"
     t.decimal "HouseEarning"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  create_table "deals", force: :cascade do |t|
+    t.datetime "DealAt"
+    t.integer "DealerHandValue"
+    t.integer "GameID"
+    t.integer "RoundNumber"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  create_table "game_entries", force: :cascade do |t|
+    t.string "GameID"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end
@@ -23,6 +38,24 @@ ActiveRecord::Schema[8.1].define(version: 2026_08_30_054410) do
     t.integer "DealersID"
     t.string "GameName"
     t.boolean "InPlay"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  create_table "player_hands", force: :cascade do |t|
+    t.decimal "Bet"
+    t.integer "DealID"
+    t.integer "EntryID"
+    t.string "Outcome"
+    t.string "Payout"
+    t.integer "PlayerHandValue"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  create_table "players", force: :cascade do |t|
+    t.string "PlayName"
+    t.decimal "TotalEarnings"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end
