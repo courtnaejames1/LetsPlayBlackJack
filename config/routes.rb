@@ -1,6 +1,5 @@
 Rails.application.routes.draw do
-  resources :books
-   get "home/index"
+  get "home/index"
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
   get "/games", to: "games#index"
   get "/game_entries", to: "game_entries#index"
