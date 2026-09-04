@@ -1,0 +1,13 @@
+<form name="myForm" action="/games" data-controller="game" data-action="submit->game#validateGameInput">
+  <h2>Join a Game</h2>
+  <div class="mb-3">
+    <label for="gamerNameInput" class="form-label">Name</label>
+      <input type="text" class="form-control" id="gamerNameInput" required>
+  </div>
+  <div class="mb-3">
+    <label for="gamerBetInput" class="form-label">Starting Bet</label>
+    <input type="text" class="form-control" id="gamerBetInput" required>
+  </div>
+  
+  <button class="btn btn-primary" type="submit">Create Game</button>
+</form>
