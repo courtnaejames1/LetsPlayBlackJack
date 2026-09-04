@@ -1,4 +1,5 @@
 class Game < ApplicationRecord
+  ## Initializes relationships between tables
     belongs_to :dealer
 
     has_many :game_entry
@@ -9,11 +10,11 @@ class Game < ApplicationRecord
     VALUES = [ "2", "3", "4", "5", "6", "7", "8", "9", "10", "J", "Q", "K", "A" ]
     SUITS = [ "H", "D", "S", "C" ]
 
-    # Initialze the defaults for the game
+    # Initialize the defaults for the game
     def initialize(decks = 8, hands = 1, deck = [], users_cards = [], dealers_cards = [])
       @num_of_decks = decks
       @num_of_hands = hands
-      @users_cards = user_cards
+      @users_cards = users_cards
       @dealers_cards = dealers_cards
 
       @bust = false
@@ -29,12 +30,12 @@ class Game < ApplicationRecord
 
     # Goes through the array for the values and the card and connects them together
     def initialize_game
-        for i in 1..TYPES.size
-          for j in 1..VALUES.size
-            deck << "#{j}-#{i}"
-          end
-        end
-        deck.shuffle
+      (1..SUITS.size).each { |i|
+        (1..VALUES.size).each { |j|
+          @deck << "#{j}-#{i}"
+        }
+      }
+      @deck.shuffle
     end
 
     # Creates stay functionality for player.
@@ -43,7 +44,7 @@ class Game < ApplicationRecord
         @stay_clicked = true
         @dealers_score = 0
         @dealers_cards.each do |card|
-        value = card.split(/D|H|S|C/)[0]
+        value = card.split(/[DHSC]/)[0]
             if value =="K" || value == "Q" || value == "J"
                 @dealers_score += 10
             elsif value == "A"
