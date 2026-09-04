@@ -8,3 +8,27 @@
  *
  * Consider organizing styles into separate files for maintainability.
  */
+
+.header {
+    text-align: center;
+}
+
+.h2 {
+    text-align: center;
+}
+
+.container {
+    justify-content: center;
+    align-items: center;
+    padding: 25px 50px;
+}
+
+.body {
+    align-items: center;
+}
+
+.dealed-cards img {
+    height: 175px;
+    width: 125px;
+    margin: 1px;
+}
