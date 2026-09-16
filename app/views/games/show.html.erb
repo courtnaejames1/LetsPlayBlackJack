@@ -1,0 +1,18 @@
+<p style="color: green"><%= notice %></p>
+
+<div class="flex justify-center text-xl font-bold">Game: <%= @game.name %></div>
+<div class ="flex flex-col justify-center">
+  <turbo-frame id="dealers_card">
+    <%= render partial: "games/dealers_hand", locals: { dealers_hand: @game.dealers_hands, stay_clicked: @stay_clicked} %>
+  </turbo-frame>
+  <turbo-frame id = "users_hand">
+    <%= render partial: "games/users_hand", locals: { users_hands: @game.user_hands, bust: @bust } %>
+  </turbo-frame>
+
+  <%= puts @game.dealers_hands %>
+  <%= puts @game.user_hands %>
+</div>
+
+
+
+<!--## Render full game here using dealer and users partial-->

@@ -1,10 +1,14 @@
 Rails.application.routes.draw do
+  resources :games
   get "home/index"
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
   get "/games", to: "games#index"
-  get "/game_entries", to: "game_entries#index"
+  get "/new", to: "games#new"
 
-  # get "/images/*", to:
+  post "/games/:id/hit/:player", to: "games#hit", as: "hit"
+  post "/games/:id/stay", to: "games#stay", as: "stay"
+  post "another", to: "games#another"
+
 
   # Reveal health status on /up that returns 200 if the app boots with no exceptions, otherwise 500.
   # Can be used by load balancers and uptime monitors to verify that the app is live.
@@ -15,6 +19,6 @@ Rails.application.routes.draw do
   # get "service-worker" => "rails/pwa#service_worker", as: :pwa_service_worker
 
   # Defines the root path route ("/")
-  root "home#index"
+  root "games#index"
   # resource :games
 end

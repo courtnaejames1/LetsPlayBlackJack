@@ -10,58 +10,17 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_09_01_021233) do
-  create_table "books", force: :cascade do |t|
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-  end
-
-  create_table "dealers", force: :cascade do |t|
-    t.string "DealerName"
-    t.decimal "HouseEarning"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-  end
-
-  create_table "deals", force: :cascade do |t|
-    t.datetime "DealAt"
-    t.integer "DealerHandValue"
-    t.integer "GameID"
-    t.integer "RoundNumber"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-  end
-
-  create_table "game_entries", force: :cascade do |t|
-    t.string "GameID"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-  end
-
+ActiveRecord::Schema[8.1].define(version: 2026_09_13_005614) do
   create_table "games", force: :cascade do |t|
-    t.decimal "BetMinimum"
-    t.integer "DealersID"
-    t.string "GameName"
-    t.boolean "InPlay"
     t.datetime "created_at", null: false
+    t.json "dealers_hands"
+    t.json "deck"
+    t.integer "decks"
+    t.json "hands"
+    t.string "name"
+    t.decimal "starting_bet"
     t.datetime "updated_at", null: false
-  end
-
-  create_table "player_hands", force: :cascade do |t|
-    t.decimal "Bet"
-    t.integer "DealID"
-    t.integer "EntryID"
-    t.string "Outcome"
-    t.string "Payout"
-    t.integer "PlayerHandValue"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-  end
-
-  create_table "players", force: :cascade do |t|
-    t.string "PlayName"
-    t.decimal "TotalEarnings"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.json "user_hands"
+    t.boolean "win_or_lose"
   end
 end

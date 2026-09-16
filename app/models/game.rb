@@ -1,122 +1,128 @@
 class Game < ApplicationRecord
-  ## Initializes relationships between tables
-    belongs_to :dealer
 
-    has_many :game_entry
+  validates :name, presence: true
+  validates :starting_bet, numericality: { greater_than: 0 }
 
-    has_many :player, through: :game_entries
-    has_many :hands, through: :deals
+  # Constants
+  VALUES = %w[2 3 4 5 6 7 8 9 10 K Q J A]
+  SUITS = %w[H D S C]
 
-    VALUES = [ "2", "3", "4", "5", "6", "7", "8", "9", "10", "J", "Q", "K", "A" ]
-    SUITS = [ "H", "D", "S", "C" ]
 
-    # Initialize the defaults for the game
-    def initialize(decks = 8, hands = 1, deck = [], users_cards = [], dealers_cards = [])
-      @num_of_decks = decks
-      @num_of_hands = hands
-      @users_cards = users_cards
-      @dealers_cards = dealers_cards
+  # Initialize the game
+  def self.start_game(name:, starting_bet:, decks: 8)
+    full_deck = self.init_game
+    user_cards = [ full_deck.pop, full_deck.pop ]
+    dealers_cards = [ full_deck.pop, full_deck.pop ]
+    puts "here is the deck#{full_deck}"
+    @stay_clicked = false
+    @bust = false
 
-      @bust = false
-      @players_score = 0
-      @dealers_score = 0
+    create(
+      name: name,
+      starting_bet: starting_bet,
+      decks: decks,
+      hands: 1,
+      deck: full_deck,
+      user_hands: user_cards,
+      dealers_hands: dealers_cards,
+      win_or_lose: false
+    )
+  end
 
-      if deck==[]
-        @deck = initialize_game
-      else
-        @deck = deck
-      end
-    end
-
-    # Goes through the array for the values and the card and connects them together
-    def initialize_game
-      (1..SUITS.size).each { |i|
-        (1..VALUES.size).each { |j|
-          @deck << "#{j}-#{i}"
-        }
+  ## Shuffle the cards to be displayed
+  def self.init_game
+    deck = []
+    SUITS.each { |i|
+      VALUES.each { |j|
+        deck << "#{j}-#{i}"
       }
-      @deck.shuffle
-    end
+    }
+    deck.shuffle
+  end
 
-    # Creates stay functionality for player.
-    # When the player clicks stay, the dealers score is calculated
-    def stay
-        @stay_clicked = true
-        @dealers_score = 0
-        @dealers_cards.each do |card|
-        value = card.split(/[DHSC]/)[0]
-            if value =="K" || value == "Q" || value == "J"
-                @dealers_score += 10
-            elsif value == "A"
-              if @dealers_score < 11
-                @dealers_score+= 11
-              else
-                @dealers_score +=1
-              end
-            else
-                @dealers_score += value.to_i
-            end
-        end
-
-        if @dealers_score > 21
-            if @bust == false
-              set_players_score
-            elsif @dealers_score < 17
-                @dealers_cards << @deck[0]
-                @deck.delete_at(0)
-                stay
-            else
-                if @bust  == false
-                  set_players_score
-                end
-            end
-        end
-    end
-
-    def deal
-      for i in 1..2
-        hit("dealer")
-        hit("player")
+  def hit(player)
+    remaining = deck
+    unless @bust
+      if player == "dealer"
+        new_cards = dealers_hands + [ remaining.pop ]
+        Game.update(dealers_hands: new_cards, deck: remaining)
+      else
+        new_cards = user_hands +  [ remaining.pop ]
+        Game.update(user_hands: new_cards, deck: remaining)
+        get_score(player: "user", cards: new_cards)
       end
     end
+  end
 
-    ## Adds a new card to the players current card and calculates new value
-    def hit(player)
-            if @user.Type == "dealer"
-                @dealers_cards << deck[0]
+  def stay
+    @stay_clicked = true
 
-            else
-                @users_cards << deck[0]
-                set_players_score
-            end
-            @deal.delete_at(0)
+    @dealers_score = get_score(cards: dealers_hands)
+    if @dealers_score > 21
+      unless @bust
+        @users_score = get_score(player: "user", cards: user_hands)
+        #determine_winner(dealers_score: @dealers_score, users_score: @users_score)
+      end
+    elsif @dealers_score < 17
+      @bust = false
+      hit("dealer")
+      puts "dealers score is less than 17"
+      stay
+    else
+      unless @bust
+        get_score(player: "user", cards: user_hands)
+      end
+    end
+  end
+
+  def get_score(player: nil, cards:)
+    @score = 0
+    cards.each do  |card|
+      value = card.split(/-/)[0]
+      if value == "K" || value == "Q" || value == "J"
+        @score +=10
+      elsif value == "A"
+        if @score < 11
+          @score += 11
+        else
+          @score += 1
+        end
+      else
+        @score += value.to_i
+
+      end
+    end
+    if player == "user" && @score > 21
+        @bust = true
+    end
+    @score
+  end
+
+  def show_deck
+    @deck
+  end
+
+  def check_bust
+    @bust
+  end
+
+  def get_users_cards
+    @users_cards
+  end
+
+  def get_dealers_cards
+    @dealers_cards
+  end
+
+  def determine_winner(dealers_score:, users_score: )
+
+    if dealers_score > 21
+
     end
 
-    ## Creates a new game and loads the deck
-    def another
-        @users_cards = []
-        @dealers_cards = []
-        @bust = false
-        @stay_clicked = false
-        @dealers_score = 0
-        @players_score = 0
-        deal
-    end
+  end
 
-    def get_players_cards
-        @players_cards
-    end
 
-    def get_dealers_cards
-        @dealers_cards
-    end
 
-    def check_bust
-        @bust
-    end
 
-    ## Returns the values of the players and the dealers scores
-    def get_score
-        [ @players_score, @dealers_score ]
-    end
 end

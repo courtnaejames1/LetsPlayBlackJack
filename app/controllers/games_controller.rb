@@ -1,74 +1,118 @@
 class GamesController < ApplicationController
-  ## before anything happens in the game
-  ## create a deal
-  before_action :create
+  before_action :set_game, only: %i[ show edit update destroy hit stay ]
+
+
+  # GET /games or /games.json
   def index
-    @game = Game.all()
-    @stay_clicked = false
+    @games = Game.all
     @bust = false
-    @dealers_card = @game.get_dealers_cards
-    @players_card = @game.get_players_cards
+
   end
 
-  ## creates the game
-  # When the game is created a new dealer is made
-  def create(dealer)
-    @dealer = Dealer.new()
-    @game = Game.new()
+  def destroy
+
+  end
+  def update
+
+  end
+  # GET /games/1 or /games/1.json
+  # Change to play logic
+  def show
+    @game  = Game.find(params[:id])
+  end
+
+  # GET /games/new
+  def new
+    @game = Game.new
+  end
+
+  # GET /games/1/edit
+  def edit
+  end
+
+  # POST /games or /games.json
+  def create
+    @game = Game.start_game(name: game_params[:name], starting_bet: game_params[:starting_bet])
+
+    if @game.save
+      redirect_to action: "show", id: @game.id
+    else
+      render :new, status: :unprocessable_entity
+    end
+  end
+
+  def stay
+    @game.stay
+    @game.reload
+    @stay_clicked = true
+    @dealers_score = @game.get_score(cards: @game.dealers_hands)
+    @users_score = @game.get_score(player: "user", cards: @game.user_hands)
+
+    @scores = [ @dealers_score, @users_score ]
 
     respond_to do |format|
-      if @game.save
-        format.html { redirect_to @game, notice: "Game was successfully created." }
-        format.json { render :show, status: :created, location: @game }
-      else
-        format.html { render :new, status: :unprocessable_content }
-        format.json { render json: @game.errors, status: :unprocessable_content }
+      format.turbo_stream do
+        render turbo_stream: [
+          turbo_stream.replace(
+            "users_cards",
+            partial: "games/users_hand",
+            locals: { users_hand: @game.user_hands, bust: @bust, stay_clicked: @stay_clicked }
+          ),
+          turbo_stream.replace(
+            "dealers_cards",
+            partial: "games/dealers_hand",
+            locals: { dealers_hand: @game.dealers_hands, stay_clicked: @stay_clicked, score: @scores }
+          )
+        ]
+      end
+    end
+
+
+  end
+
+  def hit
+    @game.hit(params[:player])
+    @game.reload
+    @bust = @game.check_bust
+    @stay_clicked = false
+    if @bust
+      @stay_clicked = true
+    end
+
+    @dealers_score = @game.get_score(cards: @game.dealers_hands)
+    @users_score = @game.get_score(player: "user", cards: @game.user_hands)
+
+    @scores = [ @dealers_score, @users_score ]
+
+    # TODO: make a private method does this so it isn't repetitive
+    respond_to do |format|
+      format.turbo_stream do
+        render turbo_stream: [
+          turbo_stream.replace(
+            "users_cards",
+            partial: "games/users_hand",
+            locals: { users_cards: @game.user_hands, bust: @bust, stay_clicked: @stay_clicked }
+          ),
+          turbo_stream.replace(
+            "dealers_cards",
+            partial: "games/dealers_hand",
+            # Why are the scores returning nil
+            locals: { dealers_cards: @game.dealers_hands, stay_clicked: @stay_clicked, score: [ @dealers_score, @users_score ] }
+          )
+        ]
       end
     end
   end
 
-  ## Initializes the game
-  def initialize_game
-    puts "INIT GAME"
-    @game.initialize_game
-  end
+ private
+    # Use callbacks to share common setup or constraints between actions.
+    def set_game
+      @game = Game.find(params.expect(:id))
+    end
 
-  ## When a game is finished, the player has the ability
-  # create another game
-  # @return new cards for players and dealers
-  def another
-    @dealer = Dealer.new("Sasha", 50.00)
-    @game.create(@dealer)
-    @game.another
-    @players_cards = @game.get_players_cards
-    @dealers_cards = @game.get_dealers_cards
+    # Only allow a list of trusted parameters through.
+    def game_params
+      params.expect(game: [ :name, :starting_bet, :player] )
+    end
 
-    [ @players_cards, @dealers_cards ]
-
-  end
-
-  ## deal the player a new card
-  # and updates the players cards displayed
-  # @returns the player cards
-  def hit
-    player = param[:player]
-    @game.hit(player)
-    @bust = @game.check_bust
-
-    @players_cards = @game.get_players_cards
-
-    @players_card
-  end
-
-  ## does not distribute the player with
-  # a new card and the player loses their turn
-  # returns the dealers cards
-  def stay
-    @game.stay
-    @stay_clicked= true
-    @score = @game.get_score
-    @dealers_cards = @game.get_dealers_cards
-
-    @dealers_cards
-  end
 end

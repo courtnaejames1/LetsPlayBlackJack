@@ -1,13 +1,9 @@
 # Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
 
 one:
-  GameName: MyString
-  DealersID: 1
-  BetMinimum: 9.99
-  InPlay: false
+  name: MyString
+  starting_bet: 9.99
 
 two:
-  GameName: MyString
-  DealersID: 1
-  BetMinimum: 9.99
-  InPlay: false
+  name: MyString
+  starting_bet: 9.99

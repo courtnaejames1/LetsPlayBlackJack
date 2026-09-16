@@ -64,3 +64,8 @@ group :test do
   gem "capybara"
   gem "selenium-webdriver"
 end
+
+group :development do
+  gem "guard-livereload", "~> 2.5", require: false
+  gem "rack-livereload"
+end

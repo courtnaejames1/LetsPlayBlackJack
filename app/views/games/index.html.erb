@@ -1,22 +1,22 @@
-<body>
-    <div>
-        <div class="card w-100">
-            <div class="card-body">
-                <h5 class="card-title">Let's Play</h5> <br><br>
-                <h5>Dealer's Cards</h5>
-                <div class= "dealed-cards">
-                  
-                </div>
-                <br><br>
+<p style="color: green"><%= notice %></p>
 
-                <h5>Your Cards</h5>
-                <div class= "dealed-cards">
-                   
-                </div>
-                <a href="#" class="btn btn-primary">Hit</a>
-                <a href="#" class="btn btn-primary">Stay</a>
-            </div>        
-        </div>   
-    </div>
-</body>
-  
+<% content_for :title, "Games" %>
+
+<h1>Games</h1>
+
+<div id="games">
+  <% @games.each do |game| %>
+    <%= render game %>
+    <p>
+      <%= link_to "Show this game", game %>
+    </p>
+  <% end %>
+</div>
+
+<%= link_to "New game", new_game_path %>
+
+<!-- Show the list of games for the player that is running on the browser
+    Can use that player params thing
+    Or create a table for the player
+    that holds their name 
+  -->

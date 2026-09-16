@@ -1,0 +1,25 @@
+<turbo-frame id="dealers_hand">
+    <% if @stay_clicked %>
+      <p class=" flex justify-center">Dealer <%= @scores&.[](0) || 0 %></p>
+      <p> The if statement is working</p>
+    <%else %>
+    <p>&nbsp;</p>
+  <% end %>
+  <div class=" flex flex-row justify-center space x-2">
+    <%@game.dealers_hands.each_with_index do |dealer_card, index| %>
+    <% if index == 1 && !@stay_clicked %>
+      <%= image_tag "BACK.png", alt:"dealers hidden card", width:100, height:100 %>
+        <%else %>
+        <%= image_tag "#{dealer_card}.png", width: 100, height:100 %>
+      <% end %>
+    <% end %>
+  </div>
+  <div class="p-5 "></div>
+  <% if @stay_clicked %>
+    <p class="flex justify-center">User: <%= @scores&.[](1) || 0 %></p>
+    <p> the is statement is working </p>
+  <% else %>
+    <p>&nbsp;</p>
+  <% end %>
+
+</turbo-frame>
