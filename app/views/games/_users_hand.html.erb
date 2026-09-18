@@ -1,28 +1,26 @@
-<turbo-frame id ="users_hand">
+<turbo-frame id ="users_hands">
   <div class=" flex flex-row justify-center x-2">
-    <% @game.user_hands&.each do |card| %>
+    <% user_hands&.each do |card| %>
       <%= image_tag "#{card}.png", width: 100, height: 100 %>
     <% end %>
   </div>
-  <% if !@bust || !@stay_clicked %>
+  <% if games_over %>
     <div class = "flex space-x-2 justify-center-p-2">
-      <%= button_to 'Hit', hit_path(@game, player: "player"),
-                   method: :post,
-                   data: {turbo_frame: "users_cards"},
-                   class: 'w-20 bg-green-500 round-lg'
-      %>
-
-      <%= button_to 'Stay', stay_path,
-                    method: :post,
-                    data: {turbo_frame: "dealers_cards"},
-                    class: 'w-20 bg-red-500 round-lg'
-      %>
+      <%= link_to "Go to New Page", new_game_path, data: { turbo_frame: "_top" } %>
     </div>
   <% else %>
-    <div class = "flex space-x-2 justify-center-p-2">
-      <%= button_to 'New Game?', new_game_path,
-                    method: :get,
-                    class: 'w-20 bg-green-500 p-2 rounded-lg'%>
+      <div class = "flex space-x-2 justify-center-p-2">
+      <%= button_to 'Hit', hit_path(game, player: "player"),
+                    method: :post,
+                    data: {turbo_frame: "users_hands"},
+                    class: 'w-20 bg-green-500 round-lg'
+      %>
+
+      <%= button_to 'Stay', stay_path(game),
+                    method: :post,
+                    data: {turbo_frame: "dealers_hands"},
+                    class: 'w-20 bg-red-500 round-lg'
+      %>
     </div>
   <% end %>
 </turbo-frame>

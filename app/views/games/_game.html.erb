@@ -1,22 +1,19 @@
-<div id="<%= dom_id game %>">
-  <div>
-    <strong>Name:</strong>
-    <%= game.name %>
-  </div>
+<turbo-frame id="new_game">
+  <div id="<%= dom_id game %>">
+    <div>
+      <strong>Name:</strong>
+      <%= game.name %>
+    </div>
 
-  <div>
-    <strong>Starting bet:</strong>
-    <%= game.starting_bet %>
-  </div>
+    <div>
+      <strong>Starting bet:</strong>
+      <%= game.starting_bet %>
+    </div>
 
-  <div>
-    <strong> Win or Lose? </strong>
-    <%= game.win_or_lose? ? 'Yes' : 'No'%>
-  </div>
+    <div>
+      <strong> Status? </strong>
+      <%= game.status %>
+    </div>
 
 </div>
-
-
-<!--## have two fields one for dealers hands and one for players hand
-# should I probably have two partials (one for dealer and one for player)
-# and then render them in the show page.-->
+</turbo-frame>
