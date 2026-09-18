@@ -7,7 +7,7 @@ Rails.application.routes.draw do
 
   post "/games/:id/hit/:player", to: "games#hit", as: "hit"
   post "/games/:id/stay", to: "games#stay", as: "stay"
-  post "another", to: "games#another"
+  post "another", to: "games#another", as: "another"
 
 
   # Reveal health status on /up that returns 200 if the app boots with no exceptions, otherwise 500.
