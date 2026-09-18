@@ -6,6 +6,8 @@ class Game < ApplicationRecord
   # Constants
   VALUES = %w[2 3 4 5 6 7 8 9 10 K Q J A]
   SUITS = %w[H D S C]
+  BLACKJACK = 21
+  DEALER_STAYS = 17
 
 
   # Initialize the game
@@ -13,9 +15,6 @@ class Game < ApplicationRecord
     full_deck = self.init_game
     user_cards = [ full_deck.pop, full_deck.pop ]
     dealers_cards = [ full_deck.pop, full_deck.pop ]
-    puts "here is the deck#{full_deck}"
-    @stay_clicked = false
-    @bust = false
 
     create(
       name: name,
@@ -25,7 +24,7 @@ class Game < ApplicationRecord
       deck: full_deck,
       user_hands: user_cards,
       dealers_hands: dealers_cards,
-      win_or_lose: false
+      status: "in-progress"
     )
   end
 
@@ -40,45 +39,58 @@ class Game < ApplicationRecord
     deck.shuffle
   end
 
+  ## Determines if the game is still being played
+  def in_progress?
+    status == "in-progress"
+  end
+
+  ## Determines if the game is over
+  # Used to determine if scores should be shown
+  def game_over?
+    !in_progress?
+  end
+
+  ## Distributes another card to the dealer/player
   def hit(player)
-    remaining = deck
-    unless @bust
+    return self unless in_progress?
+
+    remaining = deck.dup
+    new_card = remaining.pop
+
       if player == "dealer"
-        new_cards = dealers_hands + [ remaining.pop ]
-        Game.update(dealers_hands: new_cards, deck: remaining)
+        new_cards = dealers_hands + [ new_card ]
+        update(dealers_hands: new_cards, deck: remaining)
+         if get_score(cards: new_cards)  > BLACKJACK
+           update(status: "dealers_bust")
+         end
       else
-        new_cards = user_hands +  [ remaining.pop ]
-        Game.update(user_hands: new_cards, deck: remaining)
-        get_score(player: "user", cards: new_cards)
+        new_cards = user_hands +  [ new_card ]
+        update(user_hands: new_cards, deck: remaining)
+         if get_score(cards: new_cards) > BLACKJACK
+           update(status: "player_bust")
+         end
       end
-    end
+
   end
 
+  ## Allows the player to performs the game
+  # logic of stay and distribute more cards to the dealer
   def stay
-    @stay_clicked = true
+    return unless in_progress?
 
-    @dealers_score = get_score(cards: dealers_hands)
-    if @dealers_score > 21
-      unless @bust
-        @users_score = get_score(player: "user", cards: user_hands)
-        #determine_winner(dealers_score: @dealers_score, users_score: @users_score)
-      end
-    elsif @dealers_score < 17
-      @bust = false
+    while in_progress? && get_score(cards: dealers_hands) < DEALER_STAYS
       hit("dealer")
-      puts "dealers score is less than 17"
-      stay
-    else
-      unless @bust
-        get_score(player: "user", cards: user_hands)
-      end
     end
+
+    determine_winner if in_progress?
+    self
   end
 
-  def get_score(player: nil, cards:)
+  ## Calculates the score of the player
+  def get_score(cards:)
     @score = 0
     cards.each do  |card|
-      value = card.split(/-/)[0]
+      value = card.split(/-/).first
       if value == "K" || value == "Q" || value == "J"
         @score +=10
       elsif value == "A"
@@ -92,37 +104,27 @@ class Game < ApplicationRecord
 
       end
     end
-    if player == "user" && @score > 21
-        @bust = true
-    end
     @score
   end
 
-  def show_deck
-    @deck
+  ## Determines the winner and updates the status of the game
+  def determine_winner
+    dealers_score = get_score(cards: dealers_hands)
+    users_score = get_score(cards: user_hands)
+
+     new_status =
+        if dealers_score > BLACKJACK
+          "dealer_bust"
+        elsif users_score > BLACKJACK
+          "player_bust"
+        elsif users_score == dealers_score
+          "push"
+        elsif users_score > dealers_score
+          "player_win"
+        else
+          "dealer_win"
+        end
+
+    update(status: new_status)
   end
-
-  def check_bust
-    @bust
-  end
-
-  def get_users_cards
-    @users_cards
-  end
-
-  def get_dealers_cards
-    @dealers_cards
-  end
-
-  def determine_winner(dealers_score:, users_score: )
-
-    if dealers_score > 21
-
-    end
-
-  end
-
-
-
-
 end

@@ -5,20 +5,18 @@ class GamesController < ApplicationController
   # GET /games or /games.json
   def index
     @games = Game.all
-    @bust = false
 
   end
 
   def destroy
-
   end
+
   def update
-
   end
+
   # GET /games/1 or /games/1.json
   # Change to play logic
   def show
-    @game  = Game.find(params[:id])
   end
 
   # GET /games/new
@@ -41,67 +39,16 @@ class GamesController < ApplicationController
     end
   end
 
+  # POST /games/:id/stay
   def stay
     @game.stay
-    @game.reload
-    @stay_clicked = true
-    @dealers_score = @game.get_score(cards: @game.dealers_hands)
-    @users_score = @game.get_score(player: "user", cards: @game.user_hands)
-
-    @scores = [ @dealers_score, @users_score ]
-
-    respond_to do |format|
-      format.turbo_stream do
-        render turbo_stream: [
-          turbo_stream.replace(
-            "users_cards",
-            partial: "games/users_hand",
-            locals: { users_hand: @game.user_hands, bust: @bust, stay_clicked: @stay_clicked }
-          ),
-          turbo_stream.replace(
-            "dealers_cards",
-            partial: "games/dealers_hand",
-            locals: { dealers_hand: @game.dealers_hands, stay_clicked: @stay_clicked, score: @scores }
-          )
-        ]
-      end
-    end
-
-
+    render_hands
   end
 
+  ## POST /games/:player
   def hit
     @game.hit(params[:player])
-    @game.reload
-    @bust = @game.check_bust
-    @stay_clicked = false
-    if @bust
-      @stay_clicked = true
-    end
-
-    @dealers_score = @game.get_score(cards: @game.dealers_hands)
-    @users_score = @game.get_score(player: "user", cards: @game.user_hands)
-
-    @scores = [ @dealers_score, @users_score ]
-
-    # TODO: make a private method does this so it isn't repetitive
-    respond_to do |format|
-      format.turbo_stream do
-        render turbo_stream: [
-          turbo_stream.replace(
-            "users_cards",
-            partial: "games/users_hand",
-            locals: { users_cards: @game.user_hands, bust: @bust, stay_clicked: @stay_clicked }
-          ),
-          turbo_stream.replace(
-            "dealers_cards",
-            partial: "games/dealers_hand",
-            # Why are the scores returning nil
-            locals: { dealers_cards: @game.dealers_hands, stay_clicked: @stay_clicked, score: [ @dealers_score, @users_score ] }
-          )
-        ]
-      end
-    end
+    render_hands
   end
 
  private
@@ -113,6 +60,40 @@ class GamesController < ApplicationController
     # Only allow a list of trusted parameters through.
     def game_params
       params.expect(game: [ :name, :starting_bet, :player] )
+    end
+
+    ## Holds the local variables to be past to the turbo stream
+    def hand_locals
+      {
+        game: @game,
+        user_hands: @game.user_hands,
+        dealers_hands: @game.dealers_hands,
+        users_score: @game.get_score(cards: @game.user_hands),
+        dealers_score: @game.get_score(cards: @game.dealers_hands),
+        games_over: @game.game_over?,
+        status: @game.status
+      }
+    end
+
+  ## Renders the turbo stream for the player/dealers hand
+    def render_hands
+      respond_to do |format|
+        format.turbo_stream do
+          render turbo_stream: [
+            turbo_stream.replace(
+              "users_hands",
+              partial: "games/users_hand",
+              locals:  hand_locals
+            ),
+            turbo_stream.replace(
+              "dealers_hands",
+              partial: "games/dealers_hand",
+              # Why are the scores returning nil
+              locals: hand_locals
+            )
+          ]
+        end
+      end
     end
 
 end
