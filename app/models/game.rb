@@ -112,18 +112,18 @@ class Game < ApplicationRecord
     dealers_score = get_score(cards: dealers_hands)
     users_score = get_score(cards: user_hands)
 
-     new_status =
-        if dealers_score > BLACKJACK
-          "dealer_bust"
-        elsif users_score > BLACKJACK
-          "player_bust"
-        elsif users_score == dealers_score
-          "push"
-        elsif users_score > dealers_score
-          "player_win"
-        else
-          "dealer_win"
-        end
+    case
+    when dealers_score > BLACKJACK
+      new_status = "dealer_bust"
+    when users_score > BLACKJACK
+      new_status = "player_bust"
+    when  users_score == dealers_score
+      new_status = "push"
+    when users_score > dealers_score
+      new_status = "player_win"
+    else
+      new_status = "dealers_win"
+    end
 
     update(status: new_status)
   end
