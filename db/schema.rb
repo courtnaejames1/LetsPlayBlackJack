@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_09_18_032348) do
+ActiveRecord::Schema[8.1].define(version: 2026_09_24_023345) do
   create_table "games", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.json "dealers_hands"
@@ -19,7 +19,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_18_032348) do
     t.json "hands"
     t.string "name"
     t.decimal "starting_bet"
-    t.string "status", default: "in-progress", null: false
+    t.string "status", default: "in_progress", null: false
     t.datetime "updated_at", null: false
     t.json "user_hands"
   end

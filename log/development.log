@@ -309589,3 +309589,27 @@ Migrating to RemoveWinOrLoseFromGames (20260918032348)
   [1m[36mActiveRecord::SchemaMigration Create (0.9ms)[0m  [1m[32mINSERT INTO "schema_migrations" ("version") VALUES ('20260918032348') RETURNING "version" /*application='LetsPlayBlackJack'*/[0m
   [1m[36mTRANSACTION (8.2ms)[0m  [1m[35mCOMMIT TRANSACTION /*application='LetsPlayBlackJack'*/[0m
   [1m[36mActiveRecord::SchemaMigration Load (0.1ms)[0m  [1m[34mSELECT "schema_migrations"."version" FROM "schema_migrations" ORDER BY "schema_migrations"."version" ASC /*application='LetsPlayBlackJack'*/[0m
+Using vips to process variants requires the libvips library. Please install libvips using the instructions on the libvips website.
+Using vips to process variants requires the libvips library. Please install libvips using the instructions on the libvips website.
+Using vips to process variants requires the libvips library. Please install libvips using the instructions on the libvips website.
+  [1m[36mActiveRecord::InternalMetadata Load (0.4ms)[0m  [1m[34mSELECT * FROM "ar_internal_metadata" WHERE "ar_internal_metadata"."key" = 'environment' ORDER BY "ar_internal_metadata"."key" ASC LIMIT 1 /*application='LetsPlayBlackJack'*/[0m
+  [1m[36mActiveRecord::SchemaMigration Load (0.1ms)[0m  [1m[34mSELECT "schema_migrations"."version" FROM "schema_migrations" ORDER BY "schema_migrations"."version" ASC /*application='LetsPlayBlackJack'*/[0m
+Migrating to ChangeDefault (20260924023345)
+  [1m[36mTRANSACTION (0.1ms)[0m  [1m[35mBEGIN immediate TRANSACTION /*application='LetsPlayBlackJack'*/[0m
+  [1m[35m (0.0ms)[0m  [1m[35mPRAGMA foreign_keys /*application='LetsPlayBlackJack'*/[0m
+  [1m[35m (0.0ms)[0m  [1m[35mPRAGMA defer_foreign_keys /*application='LetsPlayBlackJack'*/[0m
+  [1m[35m (0.0ms)[0m  [1m[35mPRAGMA defer_foreign_keys = ON /*application='LetsPlayBlackJack'*/[0m
+  [1m[35m (0.1ms)[0m  [1m[35mPRAGMA foreign_keys = OFF /*application='LetsPlayBlackJack'*/[0m
+  [1m[35m (1.3ms)[0m  [1m[35mCREATE TEMPORARY TABLE "agames" ("id" integer PRIMARY KEY AUTOINCREMENT NOT NULL, "name" varchar, "starting_bet" decimal, "created_at" datetime(6) NOT NULL, "updated_at" datetime(6) NOT NULL, "decks" integer, "hands" json, "user_hands" json, "dealers_hands" json, "deck" json, "status" varchar DEFAULT 'in-progress' NOT NULL) /*application='LetsPlayBlackJack'*/[0m
+  [1m[35mSQL (0.4ms)[0m  [1m[32mINSERT INTO "agames" ("id","name","starting_bet","created_at","updated_at","decks","hands","user_hands","dealers_hands","deck","status")
+                     SELECT "id","name","starting_bet","created_at","updated_at","decks","hands","user_hands","dealers_hands","deck","status" FROM "games" /*application='LetsPlayBlackJack'*/[0m
+  [1m[35m (0.2ms)[0m  [1m[35mDROP TABLE "games" /*application='LetsPlayBlackJack'*/[0m
+  [1m[35m (0.1ms)[0m  [1m[35mCREATE TABLE "games" ("id" integer PRIMARY KEY AUTOINCREMENT NOT NULL, "name" varchar, "starting_bet" decimal, "created_at" datetime(6) NOT NULL, "updated_at" datetime(6) NOT NULL, "decks" integer, "hands" json, "user_hands" json, "dealers_hands" json, "deck" json, "status" varchar DEFAULT 'in_progress' NOT NULL) /*application='LetsPlayBlackJack'*/[0m
+  [1m[35mSQL (0.1ms)[0m  [1m[32mINSERT INTO "games" ("id","name","starting_bet","created_at","updated_at","decks","hands","user_hands","dealers_hands","deck","status")
+                     SELECT "id","name","starting_bet","created_at","updated_at","decks","hands","user_hands","dealers_hands","deck","status" FROM "agames" /*application='LetsPlayBlackJack'*/[0m
+  [1m[35m (0.1ms)[0m  [1m[35mDROP TABLE "agames" /*application='LetsPlayBlackJack'*/[0m
+  [1m[35m (0.0ms)[0m  [1m[35mPRAGMA defer_foreign_keys = 0 /*application='LetsPlayBlackJack'*/[0m
+  [1m[35m (0.0ms)[0m  [1m[35mPRAGMA foreign_keys = 1 /*application='LetsPlayBlackJack'*/[0m
+  [1m[36mActiveRecord::SchemaMigration Create (0.6ms)[0m  [1m[32mINSERT INTO "schema_migrations" ("version") VALUES ('20260924023345') RETURNING "version" /*application='LetsPlayBlackJack'*/[0m
+  [1m[36mTRANSACTION (7.5ms)[0m  [1m[35mCOMMIT TRANSACTION /*application='LetsPlayBlackJack'*/[0m
+  [1m[36mActiveRecord::SchemaMigration Load (0.1ms)[0m  [1m[34mSELECT "schema_migrations"."version" FROM "schema_migrations" ORDER BY "schema_migrations"."version" ASC /*application='LetsPlayBlackJack'*/[0m

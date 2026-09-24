@@ -24,7 +24,7 @@ class Game < ApplicationRecord
       deck: full_deck,
       user_hands: user_cards,
       dealers_hands: dealers_cards,
-      status: "in-progress"
+      status: "in_progress"
     )
   end
 
@@ -41,7 +41,7 @@ class Game < ApplicationRecord
 
   ## Determines if the game is still being played
   def in_progress?
-    status == "in-progress"
+    status == "in_progress"
   end
 
   ## Determines if the game is over
