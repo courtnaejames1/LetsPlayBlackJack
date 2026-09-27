@@ -1,22 +1,17 @@
-<p style="color: green"><%= notice %></p>
-
 <% content_for :title, "Games" %>
 
 <h1>Games</h1>
+<% if user_signed_in? %>
+  <div id="games">
+    <% @games.where(user_id: current_user).each do |game| %>
+      <%= render game %>
+      <p>
+        <%= link_to "Show this game", game %>
+      </p>
+    <% end %>
+  </div>
+<%else %>
+  <%= link_to "Sign in", new_user_session_path %>
+<% end %>
 
-<div id="games">
-  <% @games.each do |game| %>
-    <%= render game %>
-    <p>
-      <%= link_to "Show this game", game %>
-    </p>
-  <% end %>
-</div>
 
-<%= link_to "New game", new_game_path %>
-
-<!-- Show the list of games for the player that is running on the browser
-    Can use that player params thing
-    Or create a table for the player
-    that holds their name 
-  -->

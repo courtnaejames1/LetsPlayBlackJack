@@ -31,6 +31,7 @@ class GamesController < ApplicationController
   # POST /games or /games.json
   def create
     @game = Game.start_game(name: game_params[:name], starting_bet: game_params[:starting_bet])
+    @game.user_id = current_user.id
 
     if @game.save
       redirect_to action: "show", id: @game.id
@@ -59,7 +60,7 @@ class GamesController < ApplicationController
 
     # Only allow a list of trusted parameters through.
     def game_params
-      params.expect(game: [ :name, :starting_bet, :player] )
+      params.expect(game: [ :name, :starting_bet, :player, :user_id])
     end
 
     ## Holds the local variables to be past to the turbo stream

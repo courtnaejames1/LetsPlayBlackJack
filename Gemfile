@@ -69,3 +69,5 @@ group :development do
   gem "guard-livereload", "~> 2.5", require: false
   gem "rack-livereload"
 end
+
+gem 'devise', '>= 5.0.4'

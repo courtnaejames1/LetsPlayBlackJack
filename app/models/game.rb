@@ -1,4 +1,5 @@
 class Game < ApplicationRecord
+  belongs_to :user
 
   validates :name, presence: true
   validates :starting_bet, numericality: { greater_than: 0 }
